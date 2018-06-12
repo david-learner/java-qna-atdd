@@ -45,18 +45,9 @@ public class UserService {
     }
 
     public User login(String userId, String password) throws UnAuthenticationException {
-        log.debug("userId : {}, password : {}", userId, password);
-        Optional<User> savedUser = userRepository.findByUserId(userId);
-
-        // TODO stream사용해서 한 줄로 처리하기.
-        if (!savedUser.isPresent()) {
-            throw new UnAuthenticationException();
-        }
-        User user = savedUser.get();
-        if (!user.matchPassword(password)) {
-            throw new UnAuthenticationException();
-        }
-
-        return user;
+        log.debug("userId : {}, password g: {}", userId, password);
+        return userRepository.findByUserId(userId)
+                .filter(user -> user.matchPassword(password))
+                .orElseThrow(UnAuthenticationException::new);
     }
 }
