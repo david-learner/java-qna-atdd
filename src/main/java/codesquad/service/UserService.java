@@ -4,7 +4,11 @@ import java.util.List;
 import java.util.Optional;
 
 import javax.annotation.Resource;
+import javax.swing.text.html.Option;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import codesquad.UnAuthenticationException;
@@ -15,6 +19,8 @@ import codesquad.dto.UserDto;
 
 @Service("userService")
 public class UserService {
+    private static final Logger log =  LoggerFactory.getLogger(UserService.class);
+
     @Resource(name = "userRepository")
     private UserRepository userRepository;
 
@@ -39,7 +45,18 @@ public class UserService {
     }
 
     public User login(String userId, String password) throws UnAuthenticationException {
-        // TODO 로그인 기능 구현
-        return null;
+        log.debug("userId : {}, password : {}", userId, password);
+        Optional<User> savedUser = userRepository.findByUserId(userId);
+
+        // TODO stream사용해서 한 줄로 처리하기.
+        if (!savedUser.isPresent()) {
+            throw new UnAuthenticationException();
+        }
+        User user = savedUser.get();
+        if (!user.matchPassword(password)) {
+            throw new UnAuthenticationException();
+        }
+
+        return user;
     }
 }
