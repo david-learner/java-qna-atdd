@@ -50,7 +50,5 @@ public class LoginAcceptanceTest extends AcceptanceTest {
 
         ResponseEntity<String> response = template().postForEntity("/users/login", request, String.class);
         assertThat(response.getStatusCode(), is(HttpStatus.OK));
-        // Response가 왜 null인지 이유 모름
-//        assertThat(response.getHeaders().getLocation().getPath(), is("/user/login_failed"));
     }
 }
