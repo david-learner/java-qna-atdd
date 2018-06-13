@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.Optional;
 
 import javax.annotation.Resource;
+import javax.validation.constraints.Null;
 
 import codesquad.dto.QuestionDto;
 import org.slf4j.Logger;
@@ -53,6 +54,11 @@ public class QnaService {
     @Transactional
     public void deleteQuestion(User loginUser, long questionId) throws CannotDeleteException {
         // TODO 삭제 기능 구현
+        Optional<Question> question = questionRepository.findById(questionId);
+        if (!question.isPresent()) {
+            throw new NullPointerException();
+        }
+        question.get().delete(loginUser);
     }
 
     public Iterable<Question> findAll() {

@@ -14,6 +14,7 @@ import javax.persistence.OneToMany;
 import javax.persistence.OrderBy;
 import javax.validation.constraints.Size;
 
+import codesquad.CannotDeleteException;
 import org.hibernate.annotations.Where;
 
 import codesquad.dto.QuestionDto;
@@ -76,6 +77,13 @@ public class Question extends AbstractEntity implements UrlGeneratable {
 
     public boolean isDeleted() {
         return deleted;
+    }
+
+    public void delete(User loginedUser) throws CannotDeleteException {
+        if (!isOwner(loginedUser)) {
+            throw new CannotDeleteException("Mismatch owner");
+        }
+        deleted = true;
     }
 
     public Question update(Question question) {

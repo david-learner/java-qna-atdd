@@ -49,7 +49,7 @@ public class QuestionAcceptanceTest extends AcceptanceTest {
         qnaService.create(defaultUser(), q2);
         questions = Arrays.asList(q1, q2);
 
-        builder  = HtmlFormDataBuilder.urlEncodedForm();
+        builder = HtmlFormDataBuilder.urlEncodedForm();
     }
 
     @Test
@@ -99,7 +99,7 @@ public class QuestionAcceptanceTest extends AcceptanceTest {
         ResponseEntity<String> response = template().getForEntity(String.format("/questions/%d", questionId), String.class, request);
 
         log.debug("response body is {}", response.getBody());
-        assertThat(response.getStatusCode(),is(HttpStatus.OK));
+        assertThat(response.getStatusCode(), is(HttpStatus.OK));
         assertThat(response.getBody().contains("질문1 내용"), is(true));
     }
 
@@ -110,13 +110,12 @@ public class QuestionAcceptanceTest extends AcceptanceTest {
         ResponseEntity<String> response = basicAuthTemplate(loginedUser).getForEntity(String.format("/questions/%d/form", questionId), String.class, builder.build());
 
         log.debug("response body is {}", response.getBody());
-        assertThat(response.getStatusCode(),is(HttpStatus.OK));
+        assertThat(response.getStatusCode(), is(HttpStatus.OK));
         assertThat(response.getBody().contains("질문1 내용"), is(true));
     }
 
     @Test
     public void update() {
-        // put method로 바꾸기
         int questionId = 3;
         builder.addParameter("title", "질문1 수정된 제목");
         builder.addParameter("contents", "질문1 수정된 내용");
@@ -124,8 +123,31 @@ public class QuestionAcceptanceTest extends AcceptanceTest {
         ResponseEntity<String> response =
                 basicAuthTemplate(loginedUser).exchange("/questions/{id}",
                         HttpMethod.PUT, builder.build(), String.class, questionId);
-        assertThat(response.getStatusCode(),is(HttpStatus.FOUND));
+        assertThat(response.getStatusCode(), is(HttpStatus.FOUND));
         ResponseEntity<String> questionShowResponse = template().getForEntity(String.format("/questions/%d", questionId), String.class);
         assertThat(questionShowResponse.getBody().contains("질문1 수정된 제목"), is(true));
+    }
+
+    @Test
+    public void delete() {
+        int questionId = 3;
+        builder.addParameter("title", "질문1 수정된 제목");
+        builder.addParameter("contents", "질문1 수정된 내용");
+
+        ResponseEntity<String> response =
+                basicAuthTemplate(loginedUser).exchange("/questions/{id}",
+                        HttpMethod.PUT, builder.build(), String.class, questionId);
+        assertThat(response.getStatusCode(), is(HttpStatus.FOUND));
+
+        response = template().getForEntity(String.format("/questions/%d", questionId), String.class);
+        assertThat(response.getBody().contains("질문1 수정된 제목"), is(true));
+
+        // 얘는 왜 안 될까?
+//        basicAuthTemplate(loginedUser).delete(String.format("/questions/%d", questionId));
+        response = basicAuthTemplate(loginedUser).exchange("/questions/{id}",
+                        HttpMethod.DELETE, builder.build(), String.class, questionId);
+        assertThat(response.getStatusCode(), is(HttpStatus.FOUND));
+        response  = template().getForEntity("/questions", String.class);
+        assertThat(response.getBody().contains("질문1 수정된 제목"), is(false));
     }
 }
