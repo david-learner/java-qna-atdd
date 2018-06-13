@@ -125,8 +125,7 @@ public class QuestionAcceptanceTest extends AcceptanceTest {
                 basicAuthTemplate(loginedUser).exchange("/questions/{id}",
                         HttpMethod.PUT, builder.build(), String.class, questionId);
         assertThat(response.getStatusCode(),is(HttpStatus.FOUND));
-        // FOUND를 확인 후 다시 /question/3 을 요청해서 변경된 것을 확인할 수 없는가?
-//        ResponseEntity<String> questionShowResponse = template().getForEntity(String.format("/questions/%d", questionId), String.class);
-//        assertThat(questionShowResponse.getBody().contains("질문1 수정된 제목"), is(true));
+        ResponseEntity<String> questionShowResponse = template().getForEntity(String.format("/questions/%d", questionId), String.class);
+        assertThat(questionShowResponse.getBody().contains("질문1 수정된 제목"), is(true));
     }
 }

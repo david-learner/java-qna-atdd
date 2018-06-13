@@ -43,7 +43,6 @@ public class QnaService {
     }
 
     public Question update(User loginUser, long id, Question updatedQuestion) {
-        // TODO 수정 기능 구현
         Optional<Question> question = questionRepository.findById(id);
         if (!question.isPresent()) {
             throw new NullPointerException("Question Update Error");
