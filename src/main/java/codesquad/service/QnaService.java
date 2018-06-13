@@ -5,6 +5,7 @@ import java.util.Optional;
 
 import javax.annotation.Resource;
 
+import codesquad.dto.QuestionDto;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Pageable;
@@ -43,7 +44,11 @@ public class QnaService {
 
     public Question update(User loginUser, long id, Question updatedQuestion) {
         // TODO 수정 기능 구현
-        return null;
+        Optional<Question> question = questionRepository.findById(id);
+        if (!question.isPresent()) {
+            throw new NullPointerException("Question Update Error");
+        }
+        return questionRepository.save(question.get().update(updatedQuestion));
     }
 
     @Transactional
