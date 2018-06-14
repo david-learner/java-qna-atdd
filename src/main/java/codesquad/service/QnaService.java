@@ -48,7 +48,7 @@ public class QnaService {
         if (!question.isPresent()) {
             throw new NullPointerException("Question Update Error");
         }
-        return questionRepository.save(question.get().update(updatedQuestion));
+        return questionRepository.save(question.get().update(loginUser, updatedQuestion));
     }
 
     @Transactional
