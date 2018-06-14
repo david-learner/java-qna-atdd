@@ -1,29 +1,20 @@
 package codesquad.web;
 
-import codesquad.CannotDeleteException;
 import codesquad.Util.HtmlFormDataBuilder;
-import codesquad.domain.Answer;
 import codesquad.domain.Question;
 import codesquad.domain.QuestionRepository;
 import codesquad.domain.User;
 import codesquad.service.QnaService;
 import org.junit.Before;
 import org.junit.Test;
-import org.mockito.Mock;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.querydsl.QuerydslUtils;
-import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.util.MultiValueMap;
 import support.test.AcceptanceTest;
 
-import javax.xml.ws.Response;
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 import static org.hamcrest.CoreMatchers.is;
@@ -31,7 +22,7 @@ import static org.junit.Assert.assertThat;
 
 public class QuestionAcceptanceTest extends AcceptanceTest {
     private static final Logger log = LoggerFactory.getLogger(QuestionAcceptanceTest.class);
-    private static final String TITLE  = "국내에서 Ruby on";
+    private static final String TITLE = "국내에서 Ruby on";
     private static final int ID = 1;
 
     @Autowired
@@ -55,7 +46,7 @@ public class QuestionAcceptanceTest extends AcceptanceTest {
     public void list() {
         builder.addParameter("questions", questions);
         ResponseEntity<String> response = template().getForEntity("/", String.class, builder.build());
-        log.debug("response body is {}", response.getBody());
+
         assertThat(response.getStatusCode(), is(HttpStatus.OK));
         assertThat(response.getBody().contains("runtime 에 reflect"), is(true));
     }
@@ -92,7 +83,6 @@ public class QuestionAcceptanceTest extends AcceptanceTest {
     public void show() {
         ResponseEntity<String> response = template().getForEntity(String.format("/questions/%d", ID), String.class);
 
-        log.debug("response body is {}", response.getBody());
         assertThat(response.getStatusCode(), is(HttpStatus.OK));
         assertThat(response.getBody().contains(TITLE), is(true));
     }
@@ -101,7 +91,6 @@ public class QuestionAcceptanceTest extends AcceptanceTest {
     public void updateForm() {
         ResponseEntity<String> response = basicAuthTemplate(loginedUser).getForEntity(String.format("/questions/%d/form", ID), String.class);
 
-        log.debug("response body is {}", response.getBody());
         assertThat(response.getStatusCode(), is(HttpStatus.OK));
         assertThat(response.getBody().contains(TITLE), is(true));
     }
@@ -124,12 +113,11 @@ public class QuestionAcceptanceTest extends AcceptanceTest {
 
     @Test
     public void delete() {
-        // 얘는 왜 안 될까?
-//        basicAuthTemplate(loginedUser).delete(String.format("/questions/%d", questionId));
         ResponseEntity<String> response = basicAuthTemplate(loginedUser).exchange("/questions/{id}",
-                        HttpMethod.DELETE, builder.build(), String.class, ID);
+                HttpMethod.DELETE, builder.build(), String.class, ID);
         assertThat(response.getStatusCode(), is(HttpStatus.FOUND));
-        response  = template().getForEntity("/", String.class);
+
+        response = template().getForEntity("/", String.class);
         assertThat(response.getStatusCode(), is(HttpStatus.OK));
         assertThat(response.getBody().contains(TITLE), is(false));
     }
