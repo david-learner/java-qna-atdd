@@ -3,6 +3,7 @@ package codesquad.web;
 import codesquad.CannotDeleteException;
 import codesquad.domain.Question;
 import codesquad.domain.User;
+import codesquad.dto.QuestionDto;
 import codesquad.security.LoginUser;
 import codesquad.service.QnaService;
 import codesquad.service.UserService;
@@ -33,21 +34,15 @@ public class QuestionController {
     }
 
     @PostMapping()
-    public String create(@LoginUser User loginUser, String writer, String title, String contents) {
+    public String create(@LoginUser User loginUser, String writer, QuestionDto questionDto) {
         // TODO question title, contens가 비었을 때 처리 로직
-        Question question = new Question(title, contents);
+        Question question = questionDto.toQuestion();
         qnaService.create(loginUser, question);
-        return "/home";
+        return "redirect:/";
     }
 
     @GetMapping("/{id}")
     public String show(@PathVariable Long id, Model model) {
-//        Optional<Question> maybeQuestion = qnaService.findById(id);
-//        if (maybeQuestion.isPresent()) {
-//            log.debug("maybeQuestion is {}", maybeQuestion.toString());
-//            model.addAttribute("question", maybeQuestion.get());
-//        }
-//        log.debug("maybeQuestion is passed");
         qnaService.findById(id).ifPresent(question ->
                 model.addAttribute("question", question)
         );
