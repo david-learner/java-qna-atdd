@@ -1,12 +1,10 @@
 package codesquad.web;
 
-import codesquad.CannotDeleteException;
 import codesquad.domain.Question;
 import codesquad.domain.User;
 import codesquad.dto.QuestionDto;
 import codesquad.security.LoginUser;
 import codesquad.service.QnaService;
-import codesquad.service.UserService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Controller;
@@ -14,15 +12,11 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
-import java.util.Optional;
 
 @Controller
 @RequestMapping("/questions")
 public class QuestionController {
     private static final Logger log = LoggerFactory.getLogger(QuestionController.class);
-
-    @Resource(name = "userService")
-    UserService userService;
 
     @Resource(name = "qnaService")
     QnaService qnaService;
@@ -63,11 +57,7 @@ public class QuestionController {
 
     @DeleteMapping("/{id}")
     public String delete(@LoginUser User loginedUser, @PathVariable Long id) {
-        try {
-            qnaService.deleteQuestion(loginedUser, id);
-        }catch (CannotDeleteException e) {
-            log.debug(e.getMessage());
-        }
+        qnaService.deleteQuestion(loginedUser, id);
         return "redirect:/questions";
     }
 }

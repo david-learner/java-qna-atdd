@@ -2,7 +2,6 @@ package codesquad.web;
 
 import codesquad.Util.HtmlFormDataBuilder;
 import codesquad.domain.Question;
-import codesquad.domain.QuestionRepository;
 import codesquad.domain.User;
 import codesquad.service.QnaService;
 import org.junit.Before;
@@ -15,8 +14,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import support.test.AcceptanceTest;
 
-import java.util.List;
-
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
 
@@ -26,19 +23,16 @@ public class QuestionAcceptanceTest extends AcceptanceTest {
     private static final int ID = 1;
 
     @Autowired
-    private QuestionRepository questionRepository;
-
-    @Autowired
     private QnaService qnaService;
 
     private User loginedUser;
-    private List<Question> questions;
+    private Iterable<Question> questions;
     private HtmlFormDataBuilder builder;
 
     @Before
     public void setUp() {
         loginedUser = defaultUser();
-        questions = questionRepository.findAll();
+        questions = qnaService.findAll();
         builder = HtmlFormDataBuilder.urlEncodedForm();
     }
 
