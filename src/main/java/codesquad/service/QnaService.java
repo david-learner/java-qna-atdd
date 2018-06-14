@@ -43,17 +43,17 @@ public class QnaService {
         return questionRepository.findById(id);
     }
 
-    public Question update(User loginUser, long id, Question updatedQuestion) {
+    @Transactional
+    public Question update(User loginUser, long id, QuestionDto updateQuestionDto) {
         Optional<Question> question = questionRepository.findById(id);
         if (!question.isPresent()) {
             throw new NullPointerException("Question Update Error");
         }
-        return questionRepository.save(question.get().update(loginUser, updatedQuestion));
+        return question.get().update(loginUser, updateQuestionDto.toQuestion());
     }
 
     @Transactional
     public void deleteQuestion(User loginUser, long questionId) throws CannotDeleteException {
-        // TODO 삭제 기능 구현
         Optional<Question> question = questionRepository.findById(questionId);
         if (!question.isPresent()) {
             throw new NullPointerException();

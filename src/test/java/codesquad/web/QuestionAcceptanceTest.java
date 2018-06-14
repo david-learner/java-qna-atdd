@@ -108,6 +108,7 @@ public class QuestionAcceptanceTest extends AcceptanceTest {
                         HttpMethod.PUT, builder.build(), String.class, questionId);
         assertThat(response.getStatusCode(), is(HttpStatus.FOUND));
         ResponseEntity<String> questionShowResponse = template().getForEntity(String.format("/questions/%d", questionId), String.class);
+        log.debug("response body is {}", questionShowResponse.getBody());
         assertThat(questionShowResponse.getBody().contains("2 수정 후 제목"), is(true));
     }
 
