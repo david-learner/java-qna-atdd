@@ -4,6 +4,8 @@ import codesquad.CannotDeleteException;
 import codesquad.UnAuthorizedException;
 import codesquad.dto.QuestionDto;
 import org.hibernate.annotations.Where;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import support.domain.AbstractEntity;
 import support.domain.UrlGeneratable;
 
@@ -14,6 +16,8 @@ import java.util.List;
 
 @Entity
 public class Question extends AbstractEntity implements UrlGeneratable {
+    private static final Logger log =  LoggerFactory.getLogger(Question.class);
+    
     @Size(min = 3, max = 100)
     @Column(length = 100, nullable = false)
     private String title;
@@ -80,7 +84,7 @@ public class Question extends AbstractEntity implements UrlGeneratable {
             try {
                 throw new CannotDeleteException("Mismatch owner");
             } catch (CannotDeleteException e) {
-                e.printStackTrace();
+                log.debug(e.getMessage());
             }
         }
         deleted = true;
