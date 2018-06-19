@@ -18,8 +18,8 @@ public class ApiUserAcceptanceTest extends AcceptanceTest {
         UserDto newUser = createUserDto("testuser1");
         ResponseEntity<String> response = template().postForEntity("/api/users", newUser, String.class);
         assertThat(response.getStatusCode(), is(HttpStatus.CREATED));
-        String location = response.getHeaders().getLocation().getPath();  
-        
+        String location = response.getHeaders().getLocation().getPath();
+
         UserDto dbUser = basicAuthTemplate(findByUserId(newUser.getUserId())).getForObject(location, UserDto.class);
         assertThat(dbUser, is(newUser));
     }
@@ -44,8 +44,8 @@ public class ApiUserAcceptanceTest extends AcceptanceTest {
         UserDto newUser = createUserDto("testuser3");
         ResponseEntity<String> response = template().postForEntity("/api/users", newUser, String.class);
         assertThat(response.getStatusCode(), is(HttpStatus.CREATED));
-        String location = response.getHeaders().getLocation().getPath();  
-        
+        String location = response.getHeaders().getLocation().getPath();
+        System.out.println("this is location : " + location);
         User loginUser = findByUserId(newUser.getUserId());
         UserDto updateUser = new UserDto(newUser.getUserId(), "password", "name2", "javajigi@slipp.net2");
         basicAuthTemplate(loginUser).put(location, updateUser);
