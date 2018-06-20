@@ -75,17 +75,25 @@ public class Question extends AbstractEntity implements UrlGeneratable {
         return writer.equals(loginUser);
     }
 
+    public boolean isOwner(List<Answer> answers) {
+        for (Answer answer : answers) {
+            if (!answer.isOwner(writer)) {
+                return false;
+            }
+        }
+        return true;
+    }
+
     public boolean isDeleted() {
         return deleted;
     }
 
-    public void delete(User loginedUser) {
+    public void delete(User loginedUser) throws CannotDeleteException {
         if (!isOwner(loginedUser)) {
-            try {
-                throw new CannotDeleteException("Mismatch owner");
-            } catch (CannotDeleteException e) {
-                log.debug(e.getMessage());
-            }
+            throw new CannotDeleteException("Mismatch owner");
+        }
+        if (!isOwner(answers)) {
+            throw new CannotDeleteException("Some answers are not yours.");
         }
         deleted = true;
     }
