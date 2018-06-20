@@ -60,6 +60,18 @@ public class QuestionTest {
     }
 
     @Test
+    public void delete_only_my_answer() throws CannotDeleteException {
+        Question question = new Question("최근들어 제 부족한 모습을 몇 번씩이나 발견했습니다.", "아는 척보다는 모르는 척이 낫다.");
+        question.writeBy(LEARNER);
+
+        Answer answer = new Answer(LEARNER, "겸손의 자세를 유지하자.");
+        question.addAnswer(answer);
+
+        question.delete(LEARNER);
+        assertThat(question.isDeleted(), is(true));
+    }
+
+    @Test
     public void add_answer() {
         Answer answer = new Answer(1L, LEARNER, null, "첫번 째 질문 댓글");
         firstQuestion.addAnswer(answer);
