@@ -90,4 +90,15 @@ public class ApiQuestionAcceptanceTest extends AcceptanceTest {
         ResponseEntity<String> response = basicAuthTemplate(LEARNER).getForEntity(location, String.class);
         assertThat(response.getBody().contains("deleted question"), is(true));
     }
+
+    @Test
+    public void delete_fail_not_owner() {
+        QuestionDto newQuestion = new QuestionDto("포비의 TDD 꿀팁은?", "한 번에 하나씩 구현해라.");
+
+        String location = createResource("/api/questions", newQuestion, LEARNER);
+        basicAuthTemplate(defaultUser()).delete(location);
+
+//        ResponseEntity<String> response = basicAuthTemplate(LEARNER).getForEntity(location, String.class);
+//        assertThat(response.getBody().contains("deleted question"), is(true));
+    }
 }

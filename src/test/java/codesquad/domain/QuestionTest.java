@@ -21,7 +21,6 @@ public class QuestionTest {
         firstQuestion.writeBy(LEARNER);
         secondQuestion = new Question(2L, "2번 질문 제목", "2번 질문 내용");
         updateQuestion = new Question("수정된 질문 제목", "수정된 질문 내용");
-
     }
 
     @Test
@@ -46,6 +45,23 @@ public class QuestionTest {
     @Test(expected = CannotDeleteException.class)
     public void delete_not_onwer() throws CannotDeleteException {
         firstQuestion.delete(POBI);
+    }
+
+    @Test
+    public void delete_not_my_answer() {
+        // TODO 1. 새로운 질문 생성
+        // TODO 2. 답글을 질문에 추가
+        // TODO 3. 글 삭제 시도
+        // TODO 4. 삭제 불가 예외 발생
+
+        Question question = new Question("TDD를 이을 PDD는 무엇인가요?", "Pobi Driven Development !");
+        question.writeBy(LEARNER);
+
+        Answer answer = new Answer(POBI, "PDD는 매우 강력하죠, 그래서 많이 배웁니다!");
+        question.addAnswer(answer);
+
+        question.delete(LEARNER);
+        assertThat(question.isDeleted(), is(false));
     }
 
     @Test

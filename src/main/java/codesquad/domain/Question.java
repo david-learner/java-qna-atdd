@@ -16,8 +16,8 @@ import java.util.List;
 
 @Entity
 public class Question extends AbstractEntity implements UrlGeneratable {
-    private static final Logger log =  LoggerFactory.getLogger(Question.class);
-    
+    private static final Logger log = LoggerFactory.getLogger(Question.class);
+
     @Size(min = 3, max = 100)
     @Column(length = 100, nullable = false)
     private String title;
@@ -90,7 +90,7 @@ public class Question extends AbstractEntity implements UrlGeneratable {
         deleted = true;
     }
 
-    public Question update(User loginedUser, Question question) throws UnAuthorizedException{
+    public Question update(User loginedUser, Question question) throws UnAuthorizedException {
         if (!this.isOwner(loginedUser)) {
             throw new UnAuthorizedException();
         }

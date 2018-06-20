@@ -1,6 +1,6 @@
 package codesquad.web;
 
-import codesquad.Util.HtmlFormDataBuilder;
+import codesquad.util.HtmlFormDataBuilder;
 import codesquad.domain.Question;
 import codesquad.domain.User;
 import codesquad.dto.QuestionDto;
@@ -19,6 +19,7 @@ import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
 
 public class QuestionAcceptanceTest extends AcceptanceTest {
+    private static final User LEARNER = new User(1L, "learner", "9229", "TAEWON", "htw@gmail.com");
     private static final Logger log = LoggerFactory.getLogger(QuestionAcceptanceTest.class);
     private static final String TITLE = "국내에서 Ruby on";
     private static final int ID = 1;
