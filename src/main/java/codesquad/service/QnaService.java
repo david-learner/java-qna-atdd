@@ -55,15 +55,16 @@ public class QnaService {
     }
 
     @Transactional
-    public void delete(User loginUser, long questionId) {
-        Optional<Question> question = questionRepository.findById(questionId);
-        question.ifPresent( p -> {
-            try {
-                p.delete(loginUser);
-            } catch (CannotDeleteException e) {
-                e.printStackTrace();
-            }
-        });
+    public void delete(User loginUser, long questionId) throws CannotDeleteException {
+        Question.delete(questionRepository, loginUser, questionId);
+//        Optional<Question> question = questionRepository.findById(questionId);
+//        question.ifPresent( p -> {
+//            try {
+//                p.delete(loginUser);
+//            } catch (CannotDeleteException e) {
+//                e.printStackTrace();
+//            }
+//        });
     }
 
     public Iterable<Question> findAll() {

@@ -9,10 +9,12 @@ import org.slf4j.LoggerFactory;
 import support.domain.AbstractEntity;
 import support.domain.UrlGeneratable;
 
+import javax.annotation.Resource;
 import javax.persistence.*;
 import javax.validation.constraints.Size;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 @Entity
 public class Question extends AbstractEntity implements UrlGeneratable {
@@ -88,9 +90,20 @@ public class Question extends AbstractEntity implements UrlGeneratable {
         return deleted;
     }
 
+
+    public static void delete(QuestionRepository questionRepository, User loginUser, long id) throws CannotDeleteException {
+        Optional<Question> question = questionRepository.findById(id);
+        log.debug("question get");
+        if (!question.isPresent()) {
+            throw new NullPointerException("Question is not exist.");
+        }
+        log.debug("question is present");
+        question.get().delete(loginUser);
+    }
+
     public void delete(User loginedUser) throws CannotDeleteException {
         if (!isOwner(loginedUser)) {
-            throw new CannotDeleteException("Mismatch owner");
+            throw new CannotDeleteException("Mismatch owner.");
         }
         if (!isOwner(answers)) {
             throw new CannotDeleteException("Some answers are not yours.");

@@ -3,11 +3,12 @@ package codesquad.web;
 import codesquad.domain.Question;
 import codesquad.domain.User;
 import codesquad.dto.QuestionDto;
+import codesquad.util.HtmlFormDataBuilder;
 import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
+import org.springframework.http.*;
+import org.springframework.util.MultiValueMap;
 import support.test.AcceptanceTest;
 
 import static org.hamcrest.CoreMatchers.is;
@@ -83,22 +84,24 @@ public class ApiQuestionAcceptanceTest extends AcceptanceTest {
     @Test
     public void delete() {
         QuestionDto newQuestion = new QuestionDto("Spring에서 Exception 처리 방법은?", "ExceptionHandler를 이용하면 돼!");
-
         String location = createResource("/api/questions", newQuestion, LEARNER);
-        basicAuthTemplate(LEARNER).delete(location);
 
-        ResponseEntity<String> response = basicAuthTemplate(LEARNER).getForEntity(location, String.class);
-        assertThat(response.getBody().contains("deleted question"), is(true));
+        HtmlFormDataBuilder builder = HtmlFormDataBuilder.urlEncodedForm();
+        builder.addParameter("id", String.valueOf(getQuestionId(location)));
+
+        ResponseEntity<String> response = basicAuthTemplate(LEARNER).exchange(location, HttpMethod.DELETE, builder.build(), String.class);
+        assertThat(response.getStatusCode(), is(HttpStatus.OK));
     }
 
     @Test
     public void delete_fail_not_owner() {
         QuestionDto newQuestion = new QuestionDto("포비의 TDD 꿀팁은?", "한 번에 하나씩 구현해라.");
-
         String location = createResource("/api/questions", newQuestion, LEARNER);
-        basicAuthTemplate(defaultUser()).delete(location);
 
-//        ResponseEntity<String> response = basicAuthTemplate(LEARNER).getForEntity(location, String.class);
-//        assertThat(response.getBody().contains("deleted question"), is(true));
+        HtmlFormDataBuilder builder = HtmlFormDataBuilder.urlEncodedForm();
+        builder.addParameter("id", String.valueOf(getQuestionId(location)));
+
+        ResponseEntity<String> response = basicAuthTemplate(defaultUser()).exchange(location, HttpMethod.DELETE, builder.build(), String.class);
+        assertThat(response.getStatusCode(), is(HttpStatus.BAD_REQUEST));
     }
 }
