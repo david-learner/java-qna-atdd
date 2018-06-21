@@ -41,10 +41,6 @@ public class Question extends AbstractEntity implements UrlGeneratable {
     @OrderBy("id ASC")
     private List<Answer> answers = new ArrayList<>();
 
-//    @OneToMany(mappedBy = "question", cascade = CascadeType.ALL)
-//    @OrderBy("id ASC")
-//    private List<DeleteHistory> histories = new ArrayList<>();
-
     private boolean deleted = false;
 
     public Question() {
@@ -109,14 +105,10 @@ public class Question extends AbstractEntity implements UrlGeneratable {
             throw new CannotDeleteException("Some answers are not yours.");
         }
         deleted = true;
-        return writer.addDeleteHistory(new DeleteHistory(ContentType.QUESTION, getId(), writer, LocalDateTime.now()));
-//        addHistory(new DeleteHistory(ContentType.QUESTION, getId(), writer, LocalDateTime.now()));
-//        return histories;
-    }
 
-//    public void addHistory(DeleteHistory history) {
-//        histories.add(history);
-//    }
+        DeleteHistory history = new DeleteHistory(ContentType.QUESTION, getId(), writer, LocalDateTime.now());
+        return writer.addDeleteHistory(history);
+    }
 
     public Question update(User loginedUser, Question question) throws UnAuthorizedException {
         if (!this.isOwner(loginedUser)) {
