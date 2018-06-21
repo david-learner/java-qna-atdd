@@ -110,7 +110,7 @@ public class Question extends AbstractEntity implements UrlGeneratable {
         return writer.addDeleteHistory(history);
     }
 
-    public Question update(User loginedUser, Question question) throws UnAuthorizedException {
+    public Question update(User loginedUser, Question question) throws UnAuthorizedException{
         if (!this.isOwner(loginedUser)) {
             throw new UnAuthorizedException();
         }
