@@ -1,9 +1,9 @@
 package codesquad.domain;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
+import javax.persistence.*;
 import javax.validation.constraints.Size;
 
+import org.hibernate.annotations.Where;
 import org.hibernate.validator.constraints.Email;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
@@ -11,6 +11,9 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import codesquad.UnAuthorizedException;
 import codesquad.dto.UserDto;
 import support.domain.AbstractEntity;
+
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 public class User extends AbstractEntity {
@@ -32,6 +35,10 @@ public class User extends AbstractEntity {
     @Email
     @Column(length = 50)
     private String email;
+
+    @OneToMany(mappedBy = "deletedBy", cascade = CascadeType.ALL)
+    @OrderBy("id ASC")
+    private List<DeleteHistory> histories = new ArrayList<>();
 
     public User() {
     }
@@ -87,6 +94,11 @@ public class User extends AbstractEntity {
 
     public UserDto toUserDto() {
         return new UserDto(this.userId, this.password, this.name, this.email);
+    }
+
+    public List<DeleteHistory> addDeleteHistory(DeleteHistory history) {
+        histories.add(history);
+        return histories;
     }
     
     @JsonIgnore

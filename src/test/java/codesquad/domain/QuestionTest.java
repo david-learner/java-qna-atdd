@@ -83,6 +83,7 @@ public class QuestionTest {
         question.writeBy(LEARNER);
 
         question.delete(LEARNER);
+        // 지워진 질문(논리적으로 존재하지 않는 질문)을 다시 지우려고 할 때 예외 발생
         question.delete(LEARNER);
     }
 
