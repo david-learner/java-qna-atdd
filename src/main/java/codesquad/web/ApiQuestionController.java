@@ -55,7 +55,6 @@ public class ApiQuestionController {
 
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> delete(@LoginUser User loginUser, @PathVariable long id) {
-        log.debug("user : {}, id : {}", loginUser.toString(), id);
         try {
             qnaService.delete(loginUser, id);
             return new ResponseEntity<>(HttpStatus.OK);

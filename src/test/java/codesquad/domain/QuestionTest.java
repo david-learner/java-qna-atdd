@@ -4,11 +4,17 @@ import codesquad.CannotDeleteException;
 import codesquad.UnAuthorizedException;
 import org.junit.Before;
 import org.junit.Test;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import java.util.Arrays;
+import java.util.List;
 
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
 
 public class QuestionTest {
+    private static final Logger log =  LoggerFactory.getLogger(QuestionTest.class);
     private static final User LEARNER = new User(1L, "learner", "9229", "TAEWON", "htw@gmail.com");
     private static final User POBI = new User(2L, "pobi", "1234", "jaesung", "pjs@gmail.com");
     private Question firstQuestion;
@@ -69,6 +75,29 @@ public class QuestionTest {
 
         question.delete(LEARNER);
         assertThat(question.isDeleted(), is(true));
+    }
+
+    @Test(expected = CannotDeleteException.class)
+    public void delete_not_exist_question() throws CannotDeleteException {
+        Question question = new Question("System.out.println에 전달된 문자열이 화면에 띄워지기 까지는?", "한 번 고민해보면 좋은 주제!");
+        question.writeBy(LEARNER);
+
+        question.delete(LEARNER);
+        question.delete(LEARNER);
+    }
+
+    @Test
+    public void addDeleteHistory() throws CannotDeleteException {
+        Question question = new Question("의식적인 연습, 의식적인 노력이 필요할까요?", "속도도 중요하지만, 속도만큼 중요한 것이 방향.");
+        question.writeBy(LEARNER);
+
+        Answer answer = new Answer(LEARNER, "겸손한 자세를 유지할 수 있는 의식적인 연습을 하자.");
+        question.addAnswer(answer);
+
+        List<DeleteHistory> history = question.delete(LEARNER);
+
+        assertThat(question.isDeleted(), is(true));
+        assertThat(history.size() > 0, is(true));
     }
 
     @Test

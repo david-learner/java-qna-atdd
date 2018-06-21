@@ -12,6 +12,7 @@ import support.domain.UrlGeneratable;
 import javax.annotation.Resource;
 import javax.persistence.*;
 import javax.validation.constraints.Size;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -19,6 +20,9 @@ import java.util.Optional;
 @Entity
 public class Question extends AbstractEntity implements UrlGeneratable {
     private static final Logger log = LoggerFactory.getLogger(Question.class);
+
+    @Resource(name = "")
+    private static QuestionRepository questionRepository;
 
     @Size(min = 3, max = 100)
     @Column(length = 100, nullable = false)
@@ -36,6 +40,10 @@ public class Question extends AbstractEntity implements UrlGeneratable {
     @Where(clause = "deleted = false")
     @OrderBy("id ASC")
     private List<Answer> answers = new ArrayList<>();
+
+    @OneToMany(mappedBy = "question")
+    @OrderBy("id ASC")
+    private List<DeleteHistory> histories = new ArrayList<>();
 
     private boolean deleted = false;
 
@@ -90,18 +98,10 @@ public class Question extends AbstractEntity implements UrlGeneratable {
         return deleted;
     }
 
-
-    public static void delete(QuestionRepository questionRepository, User loginUser, long id) throws CannotDeleteException {
-        Optional<Question> question = questionRepository.findById(id);
-        log.debug("question get");
-        if (!question.isPresent()) {
-            throw new NullPointerException("Question is not exist.");
+    public List<DeleteHistory> delete(User loginedUser) throws CannotDeleteException {
+        if (isDeleted()) {
+            throw new CannotDeleteException("Already deleted.");
         }
-        log.debug("question is present");
-        question.get().delete(loginUser);
-    }
-
-    public void delete(User loginedUser) throws CannotDeleteException {
         if (!isOwner(loginedUser)) {
             throw new CannotDeleteException("Mismatch owner.");
         }
@@ -109,6 +109,12 @@ public class Question extends AbstractEntity implements UrlGeneratable {
             throw new CannotDeleteException("Some answers are not yours.");
         }
         deleted = true;
+        addHistory(new DeleteHistory(ContentType.QUESTION, getId(), writer, LocalDateTime.now()));
+        return histories;
+    }
+
+    public void addHistory(DeleteHistory history) {
+        histories.add(history);
     }
 
     public Question update(User loginedUser, Question question) throws UnAuthorizedException {

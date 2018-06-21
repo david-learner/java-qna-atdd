@@ -7,8 +7,10 @@ import codesquad.util.HtmlFormDataBuilder;
 import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.http.*;
-import org.springframework.util.MultiValueMap;
+import org.springframework.http.HttpMethod;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.test.context.TestPropertySource;
 import support.test.AcceptanceTest;
 
 import static org.hamcrest.CoreMatchers.is;
@@ -102,6 +104,16 @@ public class ApiQuestionAcceptanceTest extends AcceptanceTest {
         builder.addParameter("id", String.valueOf(getQuestionId(location)));
 
         ResponseEntity<String> response = basicAuthTemplate(defaultUser()).exchange(location, HttpMethod.DELETE, builder.build(), String.class);
+        assertThat(response.getStatusCode(), is(HttpStatus.BAD_REQUEST));
+    }
+
+    @Test
+    public void delete_fail_not_exist() {
+        long id = 100L;
+        HtmlFormDataBuilder builder = HtmlFormDataBuilder.urlEncodedForm();
+        builder.addParameter("id", String.valueOf(id));
+
+        ResponseEntity<String> response = basicAuthTemplate(defaultUser()).exchange(String.format("/api/questions/%d", id), HttpMethod.DELETE, builder.build(), String.class);
         assertThat(response.getStatusCode(), is(HttpStatus.BAD_REQUEST));
     }
 }
