@@ -34,7 +34,9 @@ public class Question extends AbstractEntity implements UrlGeneratable {
     @OneToMany(mappedBy = "question", cascade = CascadeType.ALL)
     @Where(clause = "deleted = false")
     @OrderBy("id ASC")
-    private List<Answer> answers = new ArrayList<>();
+    @Embedded
+    private Answers answers = new Answers();
+//    private List<Answer> answers = new ArrayList<>();
 
     private boolean deleted = false;
 
@@ -76,30 +78,45 @@ public class Question extends AbstractEntity implements UrlGeneratable {
         return writer.equals(loginUser);
     }
 
-    public boolean isOwner(List<Answer> answers) {
-        for (Answer answer : answers) {
-            if (!answer.isOwner(writer)) {
-                return false;
-            }
-        }
-        return true;
-    }
+//    public boolean isOwner(List<Answer> answers) {
+//        for (Answer answer : answers) {
+//            if (!answer.isOwner(writer)) {
+//                return false;
+//            }
+//        }
+//        return true;
+//    }
 
     public boolean isDeleted() {
         return deleted;
     }
 
-    private List<DeleteHistory> deleteAllAnswer(List<Answer> answers) throws CannotDeleteException {
+//    private List<DeleteHistory> deleteAllAnswer(List<Answer> answers) throws CannotDeleteException {
+//        List<DeleteHistory> histories = new ArrayList<>();
+//
+//        if (!isOwner(answers)) {
+//            throw new CannotDeleteException("Some answers are not yours.");
+//        }
+//
+//        for (Answer answer : answers) {
+//            answer.delete();
+//            histories.add(new DeleteHistory(ContentType.ANSWER, answer.getId(), writer, LocalDateTime.now()));
+//        }
+//
+//        return histories;
+//    }
+
+    private List<DeleteHistory> deleteAllAnswer(Answers answers) throws CannotDeleteException {
         List<DeleteHistory> histories = new ArrayList<>();
 
-        if (!isOwner(answers)) {
+        if (answers.hasOtherOwner()) {
             throw new CannotDeleteException("Some answers are not yours.");
         }
 
-        for (Answer answer : answers) {
-            answer.delete();
-            histories.add(new DeleteHistory(ContentType.ANSWER, answer.getId(), writer, LocalDateTime.now()));
-        }
+//        for (Answer answer : answers) {
+//            answer.delete();
+//            histories.add(new DeleteHistory(ContentType.ANSWER, answer.getId(), writer, LocalDateTime.now()));
+//        }
 
         return histories;
     }
@@ -113,6 +130,7 @@ public class Question extends AbstractEntity implements UrlGeneratable {
         }
         deleted = true;
 
+//        List<DeleteHistory> histories = deleteAllAnswer(answers);
         List<DeleteHistory> histories = deleteAllAnswer(answers);
         histories.add(new DeleteHistory(ContentType.QUESTION, getId(), writer, LocalDateTime.now()));
         return histories;
