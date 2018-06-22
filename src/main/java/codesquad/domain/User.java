@@ -36,10 +36,6 @@ public class User extends AbstractEntity {
     @Column(length = 50)
     private String email;
 
-    @OneToMany(mappedBy = "deletedBy", cascade = CascadeType.ALL)
-    @OrderBy("id ASC")
-    private List<DeleteHistory> histories = new ArrayList<>();
-
     public User() {
     }
 
@@ -96,11 +92,6 @@ public class User extends AbstractEntity {
         return new UserDto(this.userId, this.password, this.name, this.email);
     }
 
-    public List<DeleteHistory> addDeleteHistory(DeleteHistory history) {
-        histories.add(history);
-        return histories;
-    }
-    
     @JsonIgnore
     public boolean isGuestUser() {
         return false;

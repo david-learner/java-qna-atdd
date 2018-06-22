@@ -7,6 +7,7 @@ import javax.annotation.Resource;
 import javax.validation.constraints.Null;
 
 import codesquad.UnAuthorizedException;
+import codesquad.domain.*;
 import codesquad.dto.QuestionDto;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -15,11 +16,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import codesquad.CannotDeleteException;
-import codesquad.domain.Answer;
-import codesquad.domain.AnswerRepository;
-import codesquad.domain.Question;
-import codesquad.domain.QuestionRepository;
-import codesquad.domain.User;
 
 @Service("qnaService")
 public class QnaService {
@@ -60,7 +56,9 @@ public class QnaService {
         if (!question.isPresent()) {
             throw new CannotDeleteException("Requested question is not exist.");
         }
-        question.get().delete(loginUser);
+
+        List<DeleteHistory> histories = question.get().delete(loginUser);
+        deleteHistoryService.saveAll(histories);
     }
 
     public Iterable<Question> findAll() {
@@ -76,7 +74,7 @@ public class QnaService {
     }
 
     public Answer deleteAnswer(User loginUser, long id) {
-        // TODO 답변 삭제 기능 구현 
+        // TODO 답변 삭제 기능 구현
         return null;
     }
 }

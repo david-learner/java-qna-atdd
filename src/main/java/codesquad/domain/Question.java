@@ -9,20 +9,15 @@ import org.slf4j.LoggerFactory;
 import support.domain.AbstractEntity;
 import support.domain.UrlGeneratable;
 
-import javax.annotation.Resource;
 import javax.persistence.*;
 import javax.validation.constraints.Size;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 
 @Entity
 public class Question extends AbstractEntity implements UrlGeneratable {
     private static final Logger log = LoggerFactory.getLogger(Question.class);
-
-    @Resource(name = "")
-    private static QuestionRepository questionRepository;
 
     @Size(min = 3, max = 100)
     @Column(length = 100, nullable = false)
@@ -94,6 +89,21 @@ public class Question extends AbstractEntity implements UrlGeneratable {
         return deleted;
     }
 
+    private List<DeleteHistory> deleteAllAnswer(List<Answer> answers) throws CannotDeleteException {
+        List<DeleteHistory> histories = new ArrayList<>();
+
+        if (!isOwner(answers)) {
+            throw new CannotDeleteException("Some answers are not yours.");
+        }
+
+        for (Answer answer : answers) {
+            answer.delete();
+            histories.add(new DeleteHistory(ContentType.ANSWER, answer.getId(), writer, LocalDateTime.now()));
+        }
+
+        return histories;
+    }
+
     public List<DeleteHistory> delete(User loginedUser) throws CannotDeleteException {
         if (isDeleted()) {
             throw new CannotDeleteException("Already deleted.");
@@ -101,16 +111,14 @@ public class Question extends AbstractEntity implements UrlGeneratable {
         if (!isOwner(loginedUser)) {
             throw new CannotDeleteException("Mismatch owner.");
         }
-        if (!isOwner(answers)) {
-            throw new CannotDeleteException("Some answers are not yours.");
-        }
         deleted = true;
 
-        DeleteHistory history = new DeleteHistory(ContentType.QUESTION, getId(), writer, LocalDateTime.now());
-        return writer.addDeleteHistory(history);
+        List<DeleteHistory> histories = deleteAllAnswer(answers);
+        histories.add(new DeleteHistory(ContentType.QUESTION, getId(), writer, LocalDateTime.now()));
+        return histories;
     }
 
-    public Question update(User loginedUser, Question question) throws UnAuthorizedException{
+    public Question update(User loginedUser, Question question) throws UnAuthorizedException {
         if (!this.isOwner(loginedUser)) {
             throw new UnAuthorizedException();
         }
