@@ -12,6 +12,6 @@ public class AnswersTest {
         User user = new User("learner", "password", "taewon", "eamil@email.com");
         Answer answer = new Answer(user, "요구사항을 잘 확인하자.");
         answers.add(answer);
-        assertThat(answers.size() > 0, is(true));
+        assertThat(answers.getSize() > 0, is(true));
     }
 }
