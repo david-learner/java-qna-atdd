@@ -37,10 +37,10 @@ public class QnaServiceTest {
         Optional<Question> maybeQuestion = Optional.of(question);
         when(questionRepository.findById(id)).thenReturn(maybeQuestion);
 
-        DeleteHistories histories = mock(DeleteHistories.class);
-        List<DeleteHistory> historyList = mock(List.class);
-        doNothing().when(deleteHistoryService).saveAll(historyList);
-        histories = qnaService.delete(learner, id);
+        // 왜 주석된 부분을 테스트 하는 것이 불필요한 stubbing인지 알아내자.
+//        List<DeleteHistory> historyList = new ArrayList<>();
+//        doNothing().when(deleteHistoryService).saveAll(historyList);
+        DeleteHistories histories = qnaService.delete(learner, id);
 
         assertThat(histories.size(), is(1));
     }
