@@ -61,6 +61,7 @@ public class QuestionTest {
         Answer answer = new Answer(POBI, "PDD는 매우 강력하죠, 그래서 많이 배웁니다!");
         question.addAnswer(answer);
 
+
         question.delete(LEARNER);
         assertThat(question.isDeleted(), is(false));
     }
@@ -95,10 +96,10 @@ public class QuestionTest {
         Answer answer = new Answer(LEARNER, "겸손한 자세를 유지할 수 있는 의식적인 연습을 하자.");
         question.addAnswer(answer);
 
-        List<DeleteHistory> history = question.delete(LEARNER);
+        DeleteHistories histories = question.delete(LEARNER);
 
         assertThat(question.isDeleted(), is(true));
-        assertThat(history.size() > 0, is(true));
+        assertThat(histories.size() > 0, is(true));
     }
 
     @Test

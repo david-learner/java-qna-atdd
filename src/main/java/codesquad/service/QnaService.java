@@ -57,8 +57,8 @@ public class QnaService {
             throw new CannotDeleteException("Requested question is not exist.");
         }
 
-        List<DeleteHistory> histories = question.get().delete(loginUser);
-        deleteHistoryService.saveAll(histories);
+        DeleteHistories histories = question.get().delete(loginUser);
+        deleteHistoryService.saveAll(histories.toList());
     }
 
     public Iterable<Question> findAll() {
@@ -70,11 +70,37 @@ public class QnaService {
     }
 
     public Answer addAnswer(User loginUser, long questionId, String contents) {
-        return null;
+        Optional<Question> question = questionRepository.findById(questionId);
+        if (!question.isPresent()) {
+            throw new NullPointerException("Not exist question.");
+        }
+        Answer answer = new Answer(loginUser, contents);
+        answerRepository.save(answer);
+        question.get().addAnswer(answer);
+        return answer;
     }
 
     public Answer deleteAnswer(User loginUser, long id) {
-        // TODO 답변 삭제 기능 구현
-        return null;
+        Optional<Answer> answer = answerRepository.findById(id);
+        if (!answer.isPresent()) {
+            throw new NullPointerException("Not exist answer.");
+        }
+        deleteHistoryService.save(answer.get().delete());
+        return answer.get();
+    }
+
+    @Transactional
+    public Answer updateAnswer(User loginUser, long id, Answer updateAnswer) {
+        Optional<Answer> answer = answerRepository.findById(id);
+        if (!answer.isPresent()) {
+            throw new NullPointerException("Not exist answer.");
+        }
+        return answer.get().update(loginUser, updateAnswer);
+    }
+
+    public Answer getAnswer(long answerId) {
+        Answer answer = answerRepository.findById(answerId).get();
+        log.debug("answer : {}", answer);
+        return answer;
     }
 }

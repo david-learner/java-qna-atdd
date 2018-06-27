@@ -3,7 +3,6 @@ package codesquad.domain;
 import codesquad.CannotDeleteException;
 import codesquad.UnAuthorizedException;
 import codesquad.dto.QuestionDto;
-import org.hibernate.annotations.Where;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import support.domain.AbstractEntity;
@@ -12,8 +11,6 @@ import support.domain.UrlGeneratable;
 import javax.persistence.*;
 import javax.validation.constraints.Size;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
 
 @Entity
 public class Question extends AbstractEntity implements UrlGeneratable {
@@ -31,12 +28,11 @@ public class Question extends AbstractEntity implements UrlGeneratable {
     @JoinColumn(foreignKey = @ForeignKey(name = "fk_question_writer"))
     private User writer;
 
-    @OneToMany(mappedBy = "question", cascade = CascadeType.ALL)
-    @Where(clause = "deleted = false")
-    @OrderBy("id ASC")
     @Embedded
     private Answers answers = new Answers();
-//    private List<Answer> answers = new ArrayList<>();
+
+    @Embedded
+    private DeleteHistories histories = new DeleteHistories();
 
     private boolean deleted = false;
 
@@ -78,50 +74,15 @@ public class Question extends AbstractEntity implements UrlGeneratable {
         return writer.equals(loginUser);
     }
 
-//    public boolean isOwner(List<Answer> answers) {
-//        for (Answer answer : answers) {
-//            if (!answer.isOwner(writer)) {
-//                return false;
-//            }
-//        }
-//        return true;
-//    }
-
     public boolean isDeleted() {
         return deleted;
     }
 
-//    private List<DeleteHistory> deleteAllAnswer(List<Answer> answers) throws CannotDeleteException {
-//        List<DeleteHistory> histories = new ArrayList<>();
-//
-//        if (!isOwner(answers)) {
-//            throw new CannotDeleteException("Some answers are not yours.");
-//        }
-//
-//        for (Answer answer : answers) {
-//            answer.delete();
-//            histories.add(new DeleteHistory(ContentType.ANSWER, answer.getId(), writer, LocalDateTime.now()));
-//        }
-//
-//        return histories;
-//    }
-
-    private List<DeleteHistory> deleteAllAnswer(Answers answers) throws CannotDeleteException {
-        List<DeleteHistory> histories = new ArrayList<>();
-
-        if (answers.hasOtherOwner()) {
-            throw new CannotDeleteException("Some answers are not yours.");
-        }
-
-//        for (Answer answer : answers) {
-//            answer.delete();
-//            histories.add(new DeleteHistory(ContentType.ANSWER, answer.getId(), writer, LocalDateTime.now()));
-//        }
-
-        return histories;
+    private DeleteHistories deleteAllAnswer(Answers answers) throws CannotDeleteException {
+        return answers.deleteAll(writer);
     }
 
-    public List<DeleteHistory> delete(User loginedUser) throws CannotDeleteException {
+    public DeleteHistories delete(User loginedUser) throws CannotDeleteException {
         if (isDeleted()) {
             throw new CannotDeleteException("Already deleted.");
         }
@@ -130,9 +91,8 @@ public class Question extends AbstractEntity implements UrlGeneratable {
         }
         deleted = true;
 
-//        List<DeleteHistory> histories = deleteAllAnswer(answers);
-        List<DeleteHistory> histories = deleteAllAnswer(answers);
-        histories.add(new DeleteHistory(ContentType.QUESTION, getId(), writer, LocalDateTime.now()));
+        DeleteHistories histories = deleteAllAnswer(answers);
+        histories.addHistory(new DeleteHistory(ContentType.QUESTION, getId(), writer, LocalDateTime.now()));
         return histories;
     }
 

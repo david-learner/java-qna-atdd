@@ -1,6 +1,12 @@
 package codesquad.domain;
 
+import codesquad.CannotDeleteException;
+import org.hibernate.annotations.Where;
+
+import javax.persistence.CascadeType;
 import javax.persistence.Embeddable;
+import javax.persistence.OneToMany;
+import javax.persistence.OrderBy;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -8,6 +14,10 @@ import java.util.List;
 @Embeddable
 public class Answers {
     private static final int FIRST = 0;
+
+    @OneToMany(mappedBy = "question", cascade = CascadeType.ALL)
+    @Where(clause = "deleted = false")
+    @OrderBy("id ASC")
     List<Answer> answers = new ArrayList<>();
 
     public Answers() {
@@ -18,9 +28,8 @@ public class Answers {
         this.answers = answers;
     }
 
-    public List<Answer> add(Answer answer) {
+    public void add(Answer answer) {
         answers.add(answer);
-        return answers;
     }
 
     public int getSize() {
@@ -34,14 +43,29 @@ public class Answers {
                 '}';
     }
 
-    public boolean hasOtherOwner() {
-        User writer = answers.get(FIRST).getWriter();
-        for(int i = 1; i < answers.size(); i++) {
+    public boolean hasOtherOwner(User owner) {
+        if (answers.isEmpty()) {
+            return false;
+        }
+        User writer = owner;
+        for (int i = 0; i < answers.size(); i++) {
             Answer answer = answers.get(i);
             if (!answer.getWriter().equals(writer)) {
                 return true;
             }
         }
         return false;
+    }
+
+    public DeleteHistories deleteAll(User owner) throws CannotDeleteException {
+        if (hasOtherOwner(owner)) {
+            throw new CannotDeleteException("Question has the answer from other owner.");
+        }
+
+        DeleteHistories histories = new DeleteHistories();
+        for (Answer answer : answers) {
+            histories.addHistory(answer.delete());
+        }
+        return histories;
     }
 }

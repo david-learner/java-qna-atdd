@@ -1,5 +1,6 @@
 package codesquad.domain;
 
+import codesquad.CannotDeleteException;
 import org.junit.Before;
 import org.junit.Test;
 import org.slf4j.Logger;
@@ -52,6 +53,26 @@ public class AnswersTest {
         answers.add(answer);
         answers.add(otherAnswer);
 
-        assertThat(answers.hasOtherOwner(), is(true));
+        assertThat(answers.hasOtherOwner(user), is(true));
+    }
+
+    @Test
+    public void update() {
+        Answer updateAnswer = new Answer(user, "변경된 요구사항을 잘 확인하자.");
+        answer.update(user, updateAnswer);
+        assertThat(answer.getContents().equals(updateAnswer.getContents()), is(true));
+    }
+
+    @Test(expected = CannotDeleteException.class)
+    public void deleteAll_fail() throws CannotDeleteException {
+        User otherUser = new User("pobi", "password", "jaesung", "eamil@email.com");
+        Answer otherAnswer = new Answer(otherUser, "TDD의 정수를 알려주마.");
+
+        answers = new Answers();
+        answers.add(answer);
+        answers.add(otherAnswer);
+
+        // answers는 question에 포함되어 있는 관계, user는 question writer
+        answers.deleteAll(user);
     }
 }

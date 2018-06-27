@@ -11,6 +11,7 @@ import codesquad.CannotDeleteException;
 import support.domain.AbstractEntity;
 import support.domain.UrlGeneratable;
 
+import java.time.LocalDateTime;
 import java.util.Objects;
 
 @Entity
@@ -69,8 +70,9 @@ public class Answer extends AbstractEntity implements UrlGeneratable {
         return deleted;
     }
 
-    public void delete() {
+    public DeleteHistory delete() {
         deleted = true;
+        return new DeleteHistory(ContentType.ANSWER, getId(), writer, LocalDateTime.now());
     }
 
     @Override
@@ -96,5 +98,13 @@ public class Answer extends AbstractEntity implements UrlGeneratable {
     public int hashCode() {
 
         return Objects.hash(super.hashCode(), writer, question, contents, deleted);
+    }
+
+    public Answer update(User user, Answer updateAnswer) {
+        if (!isOwner(user)) {
+            throw new IllegalArgumentException("Not matched owner.");
+        }
+        this.contents = updateAnswer.getContents();
+        return this;
     }
 }
