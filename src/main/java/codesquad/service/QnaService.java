@@ -51,7 +51,7 @@ public class QnaService {
     }
 
     @Transactional
-    public void delete(User loginUser, long questionId) throws CannotDeleteException {
+    public DeleteHistories delete(User loginUser, long questionId) throws CannotDeleteException {
         Optional<Question> question = questionRepository.findById(questionId);
         if (!question.isPresent()) {
             throw new CannotDeleteException("Requested question is not exist.");
@@ -59,6 +59,7 @@ public class QnaService {
 
         DeleteHistories histories = question.get().delete(loginUser);
         deleteHistoryService.saveAll(histories.toList());
+        return histories;
     }
 
     public Iterable<Question> findAll() {

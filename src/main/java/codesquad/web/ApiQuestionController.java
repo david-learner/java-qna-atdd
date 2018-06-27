@@ -24,7 +24,7 @@ public class ApiQuestionController {
     private static final Logger log =  LoggerFactory.getLogger(ApiQuestionController.class);
 
     @Resource(name = "qnaService")
-    QnaService qnaService;
+    private QnaService qnaService;
 
     @PostMapping
     public ResponseEntity<Void> create(@LoginUser User loginUser, @Valid @RequestBody QuestionDto newQuestion) {

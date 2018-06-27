@@ -8,9 +8,9 @@ import java.util.List;
 public class DeleteHistories {
 
     @OneToMany(fetch=FetchType.EAGER, cascade = CascadeType.ALL)
-    List<DeleteHistory> histories = new ArrayList<>();
+    private List<DeleteHistory> histories = new ArrayList<>();
 
-    public DeleteHistories addHistory(DeleteHistory history) {
+    protected DeleteHistories addHistory(DeleteHistory history) {
         histories.add(history);
         return this;
     }

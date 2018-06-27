@@ -17,7 +17,7 @@ import java.net.URI;
 @RequestMapping("/api/questions/{questionId}/answers")
 public class ApiAnswerController {
     @Resource(name = "qnaService")
-    QnaService qnaService;
+    private QnaService qnaService;
 
     @GetMapping("/{answerId}")
     public Answer show(@PathVariable long answerId) {

@@ -18,7 +18,7 @@ public class Answers {
     @OneToMany(mappedBy = "question", cascade = CascadeType.ALL)
     @Where(clause = "deleted = false")
     @OrderBy("id ASC")
-    List<Answer> answers = new ArrayList<>();
+    private List<Answer> answers = new ArrayList<>();
 
     public Answers() {
 
@@ -43,7 +43,7 @@ public class Answers {
                 '}';
     }
 
-    public boolean hasOtherOwner(User owner) {
+    protected boolean hasOtherOwner(User owner) {
         if (answers.isEmpty()) {
             return false;
         }
@@ -57,7 +57,7 @@ public class Answers {
         return false;
     }
 
-    public DeleteHistories deleteAll(User owner) throws CannotDeleteException {
+    protected DeleteHistories deleteAll(User owner) throws CannotDeleteException {
         if (hasOtherOwner(owner)) {
             throw new CannotDeleteException("Question has the answer from other owner.");
         }
