@@ -1,11 +1,6 @@
 package codesquad.service;
 
-import java.util.List;
-import java.util.Optional;
-
-import javax.annotation.Resource;
-import javax.validation.constraints.Null;
-
+import codesquad.CannotDeleteException;
 import codesquad.UnAuthorizedException;
 import codesquad.domain.*;
 import codesquad.dto.QuestionDto;
@@ -15,7 +10,9 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import codesquad.CannotDeleteException;
+import javax.annotation.Resource;
+import java.util.List;
+import java.util.Optional;
 
 @Service("qnaService")
 public class QnaService {

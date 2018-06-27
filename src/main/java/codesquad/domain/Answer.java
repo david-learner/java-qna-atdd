@@ -1,16 +1,10 @@
 package codesquad.domain;
 
-import javax.persistence.Entity;
-import javax.persistence.ForeignKey;
-import javax.persistence.JoinColumn;
-import javax.persistence.Lob;
-import javax.persistence.ManyToOne;
-import javax.validation.constraints.Size;
-
-import codesquad.CannotDeleteException;
 import support.domain.AbstractEntity;
 import support.domain.UrlGeneratable;
 
+import javax.persistence.*;
+import javax.validation.constraints.Size;
 import java.time.LocalDateTime;
 import java.util.Objects;
 

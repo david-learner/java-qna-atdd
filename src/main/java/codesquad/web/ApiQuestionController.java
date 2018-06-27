@@ -21,7 +21,7 @@ import java.util.Optional;
 @RestController
 @RequestMapping("/api/questions")
 public class ApiQuestionController {
-    private static final Logger log =  LoggerFactory.getLogger(ApiQuestionController.class);
+    private static final Logger log = LoggerFactory.getLogger(ApiQuestionController.class);
 
     @Resource(name = "qnaService")
     private QnaService qnaService;

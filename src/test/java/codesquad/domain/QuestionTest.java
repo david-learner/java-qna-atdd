@@ -61,7 +61,6 @@ public class QuestionTest {
         Answer answer = new Answer(POBI, "PDD는 매우 강력하죠, 그래서 많이 배웁니다!");
         question.addAnswer(answer);
 
-
         question.delete(LEARNER);
         assertThat(question.isDeleted(), is(false));
     }

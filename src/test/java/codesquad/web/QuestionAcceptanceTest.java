@@ -1,10 +1,10 @@
 package codesquad.web;
 
-import codesquad.util.HtmlFormDataBuilder;
 import codesquad.domain.Question;
 import codesquad.domain.User;
 import codesquad.dto.QuestionDto;
 import codesquad.service.QnaService;
+import codesquad.util.HtmlFormDataBuilder;
 import org.junit.Before;
 import org.junit.Test;
 import org.slf4j.Logger;
@@ -14,8 +14,6 @@ import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import support.test.AcceptanceTest;
-
-import java.util.Optional;
 
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;

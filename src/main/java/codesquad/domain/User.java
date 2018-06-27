@@ -1,19 +1,14 @@
 package codesquad.domain;
 
-import javax.persistence.*;
-import javax.validation.constraints.Size;
-
-import org.hibernate.annotations.Where;
-import org.hibernate.validator.constraints.Email;
-
-import com.fasterxml.jackson.annotation.JsonIgnore;
-
 import codesquad.UnAuthorizedException;
 import codesquad.dto.UserDto;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import org.hibernate.validator.constraints.Email;
 import support.domain.AbstractEntity;
 
-import java.util.ArrayList;
-import java.util.List;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.validation.constraints.Size;
 import java.util.Objects;
 
 @Entity
@@ -97,7 +92,7 @@ public class User extends AbstractEntity {
     public boolean isGuestUser() {
         return false;
     }
-    
+
     private static class GuestUser extends User {
         @Override
         public boolean isGuestUser() {

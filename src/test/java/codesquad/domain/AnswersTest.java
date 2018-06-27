@@ -72,7 +72,6 @@ public class AnswersTest {
         answers.add(answer);
         answers.add(otherAnswer);
 
-        // answers는 question에 포함되어 있는 관계, user는 question writer
         answers.deleteAll(user);
     }
 }
