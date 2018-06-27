@@ -2,6 +2,7 @@ package codesquad.domain;
 
 import javax.persistence.*;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 @Embeddable
@@ -21,5 +22,12 @@ public class DeleteHistories {
 
     public int size() {
         return histories.size();
+    }
+
+    @Override
+    public String toString() {
+        return "DeleteHistories{" +
+                "histories=" + Arrays.toString(histories.toArray()) +
+                '}';
     }
 }

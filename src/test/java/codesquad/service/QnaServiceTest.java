@@ -13,6 +13,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
+import static org.hamcrest.CoreMatchers.is;
+import static org.junit.Assert.assertThat;
 import static org.mockito.Mockito.*;
 
 @RunWith(MockitoJUnitRunner.class)
@@ -20,11 +22,11 @@ public class QnaServiceTest {
     @Mock
     private QuestionRepository questionRepository;
 
-    @InjectMocks
-    private QnaService qnaService;
-
     @Mock
     private DeleteHistoryService deleteHistoryService;
+
+    @InjectMocks
+    private QnaService qnaService;
 
     @Test
     public void delete() throws CannotDeleteException {
@@ -40,6 +42,6 @@ public class QnaServiceTest {
         doNothing().when(deleteHistoryService).saveAll(historyList);
         histories = qnaService.delete(learner, id);
 
-        System.out.println(histories.size()>0);
+        assertThat(histories.size(), is(1));
     }
 }
